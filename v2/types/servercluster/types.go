@@ -20,12 +20,12 @@ import "encoding/json"
 
 type IDName struct {
 	ID   int    `json:"id"`
-	Name string `json:"name"`
+	Name string `json:"name,omitempty"`
 }
 
 type SrvClusterTemplateRef struct {
 	ID           int                 `json:"id"`
-	Name         string              `json:"name"`
+	Name         string              `json:"name,omitempty"`
 	VLANs        []VNetVLAN          `json:"vlans,omitempty"`
 	IPv4Gateways []VNetGatewayAssign `json:"ipv4Gateways,omitempty"`
 	IPv6Gateways []VNetGatewayAssign `json:"ipv6Gateways,omitempty"`
@@ -33,8 +33,8 @@ type SrvClusterTemplateRef struct {
 
 type Servers struct {
 	ID     int    `json:"id"`
-	Name   string `json:"name"`
-	Shared bool   `json:"shared"`
+	Name   string `json:"name,omitempty"`
+	Shared bool   `json:"shared,omitempty"`
 }
 
 type GatewayPrefix struct {
@@ -117,7 +117,7 @@ type ServerClusterW struct {
 	Name                           string              `json:"name"`
 	Admin                          IDName              `json:"admin"`
 	Site                           IDName              `json:"site"`
-	VPC                            IDName              `json:"vpc"`
+	VPC                            *IDName             `json:"vpc,omitempty"`
 	VPCList                        []VPCMapping        `json:"vpcList,omitempty"`
 	SrvClusterTemplate             IDName              `json:"srvClusterTemplate"`
 	SrvClusterTemplateVLANs        []VNetVLAN          `json:"-"`
@@ -155,7 +155,7 @@ func (s ServerClusterW) MarshalJSON() ([]byte, error) {
 		Servers            []Servers             `json:"servers"`
 	}
 
-	vpc := &s.VPC
+	vpc := s.VPC
 	var dynamicVPCGroup *IDName
 	if s.DynamicVPCGroup != nil {
 		vpc = nil
