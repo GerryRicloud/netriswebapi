@@ -273,7 +273,13 @@ func (c *PortClient) AddToLAG(port *PortLAG) (reply http.HTTPReply, err error) {
 }
 
 func (c *PortClient) FreeUP(ports []*IDName) (reply http.HTTPReply, err error) {
-	js, err := json.Marshal(ports)
+	// The controller destructures `ports` from the request body
+	// (batchFreeUp: `const { ports } = req.body`); a bare array is
+	// rejected with "Please add at least one port."
+	str := struct {
+		Ports []*IDName `json:"ports"`
+	}{ports}
+	js, err := json.Marshal(str)
 	if err != nil {
 		return http.HTTPReply{}, fmt.Errorf("{FreeUP} %s", err)
 	}
